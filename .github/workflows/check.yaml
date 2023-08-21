@@ -1,9 +1,11 @@
+name: Check Page Workflow
 on:
   schedule:
     - cron: '0 */2 * * *'
+  workflow_dispatch:
 
 jobs:
-  build:
+  task:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
