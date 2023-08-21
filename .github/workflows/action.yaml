@@ -1,0 +1,16 @@
+on:
+  schedule:
+    - cron: '0 */2 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Create env file from secret
+      run: echo "${{ secrets.ENV_FILE }}" > .env
+
+    - name: Docker Compose run
+      run: docker compose run app
