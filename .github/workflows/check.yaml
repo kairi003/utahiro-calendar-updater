@@ -1,7 +1,7 @@
 name: Check Page Workflow
 on:
   schedule:
-    - cron: '0 */2 * * *'
+    - cron: '5 */2 * * *'
   workflow_dispatch:
     inputs:
       logLevel:
