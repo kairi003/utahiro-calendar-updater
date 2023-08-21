@@ -3,6 +3,11 @@ on:
   schedule:
     - cron: '0 */2 * * *'
   workflow_dispatch:
+    inputs:
+      logLevel:
+        description: 'Logging Level'
+        required: true
+        default: 'DEBUG'
 
 jobs:
   task:
@@ -13,6 +18,13 @@ jobs:
 
     - name: Create env file from secret
       run: echo "${{ secrets.ENV_FILE }}" > .env
+    
+    - name: Append LOG_LEVEL to .env
+      if: github.event_name == 'workflow_dispatch'
+      run: echo "LOG_LEVEL=${{ github.event.inputs.logLevel }}" >> .env
 
     - name: Docker Compose run
-      run: docker compose run app
+      run: docker compose up app
+
+    - name: Check Log
+      run: docker compose logs app
