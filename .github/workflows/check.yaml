@@ -11,7 +11,7 @@ on:
         default: 'DEBUG'
 
 jobs:
-  task:
+  check-page:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
