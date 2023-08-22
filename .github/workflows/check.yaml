@@ -2,7 +2,7 @@ name: Check Page Workflow
 
 on:
   schedule:
-    - cron: '5 */2 * * *'
+    - cron: '5 */4 * * *'
   workflow_dispatch:
     inputs:
       logLevel:
@@ -27,5 +27,5 @@ jobs:
     - name: Docker Compose run
       run: docker compose up app
 
-    - name: Check Log
+    - name: Check Docker Log
       run: docker compose logs app
