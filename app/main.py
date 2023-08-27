@@ -107,8 +107,6 @@ def main():
                     logger.info(event_date)
                     send_event(event_date, EVENT_TITLE)
                     break
-                
-                post_dt = None
 
         browser.close()
 
