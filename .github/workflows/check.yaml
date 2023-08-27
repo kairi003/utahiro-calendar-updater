@@ -19,11 +19,11 @@ jobs:
 
     - name: Create env file from secret
       run: |
-        echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-        echo PAGE_URL=${{ secrets.PAGE_URL }} >> .env
-        echo EVENT_TITLE=${{ variables.EVENT_TITLE }} >> .env
-        echo SERVER_URL=${{ variables.SERVER_URL }} >> .env
-        echo USER_AGENT=${{ variables.USER_AGENT }} >> .env
+        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
+        echo "PAGE_URL=${{ secrets.PAGE_URL }}" >> .env
+        echo "EVENT_TITLE=${{ vars.EVENT_TITLE }}" >> .env
+        echo "SERVER_URL=${{ vars.SERVER_URL }}" >> .env
+        echo "USER_AGENT=${{ vars.USER_AGENT }}" >> .env
     
     - name: Append LOG_LEVEL to .env
       if: github.event_name == 'workflow_dispatch'
