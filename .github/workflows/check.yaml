@@ -10,6 +10,9 @@ on:
         required: true
         default: 'DEBUG'
 
+env:
+  PATH_CACHE: /tmp/docker-image-arc.tar
+
 jobs:
   check-page:
     runs-on: ubuntu-latest
@@ -31,20 +34,20 @@ jobs:
     
     - name: Check Cache Image
       uses: actions/cache@v3
+      id: cache
       with:
-        id: check-cache-image
-        path: playwright-requests.tar
+        path: ${{ env.PATH_CACHE }}}
         key: ${{ runner.os }}-${{ hashFiles('Dockerfile') }}
     
     - name: Load Cache Image
-      if: steps.check-cache-image.cache-hit == 'true'
-      run: docker load -i playwright-requests.tar
+      if: steps.cache.cache-hit == 'true'
+      run: docker load -i ${{ env.PATH_CACHE }}}
     
-    - name: Build Docker Image
-      if: steps.check-cache-image.outputs.cache-hit != 'true'
+    - name: Build Image
+      if: steps.cache.outputs.cache-hit != 'true'
       run: |
         docker build . -t playwright-requests
-        docker save playwright-requests -o playwright-requests.tar
+        docker save playwright-requests -o ${{ env.PATH_CACHE }}}
     
     - name: Docker Compose run
       run: docker compose up app
