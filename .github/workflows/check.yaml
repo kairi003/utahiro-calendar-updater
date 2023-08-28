@@ -12,6 +12,7 @@ on:
 
 env:
   PATH_CACHE: /tmp/docker-image-arc.tar
+  LOCAL_IMAGE_NAME: playwright-requests
 
 jobs:
   check-page:
@@ -46,8 +47,8 @@ jobs:
     # - name: Build Image and Save Image Archive
     #   if: steps.cache.outputs.cache-hit != 'true'
     #   run: |
-    #     docker build . -t playwright-requests
-    #     docker save playwright-requests -o ${{ env.PATH_CACHE }}}
+    #     docker build . -t ${{ env.LOCAL_IMAGE_NAME }}
+    #     docker save ${{ env.LOCAL_IMAGE_NAME }} -o ${{ env.PATH_CACHE }}}
 
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v2
@@ -58,8 +59,8 @@ jobs:
     
     - name: Docker Pull
       run: |
-        docker pull ${{ vars.IMAGE_NAME }}
-        docker tag ${{ vars.IMAGE_NAME }} playwright-requests
+        docker pull ${{ vars.REMOTE_IMAGE_NAME }}
+        docker tag ${{ vars.REMOTE_IMAGE_NAME }} ${{ env.LOCAL_IMAGE_NAME }}
     
     - name: Docker Compose run
       run: docker compose up app
