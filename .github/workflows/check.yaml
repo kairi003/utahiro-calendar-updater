@@ -32,11 +32,12 @@ jobs:
     - name: Check Cache Image
       uses: actions/cache@v3
       with:
+        id: check-cache-image
         path: playwright-requests.tar
         key: ${{ runner.os }}-${{ hashFiles('Dockerfile') }}
     
     - name: Load Cache Image
-      if: steps.check-cache-image.outputs.cache-hit == 'true'
+      if: steps.check-cache-image.cache-hit == 'true'
       run: docker load -i playwright-requests.tar
     
     - name: Build Docker Image
