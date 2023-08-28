@@ -32,18 +32,18 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       run: echo "LOG_LEVEL=${{ github.event.inputs.logLevel }}" >> .env
     
-    - name: Check Cache Image
+    - name: Check Cache Image Archive
       uses: actions/cache@v3
       id: cache
       with:
         path: ${{ env.PATH_CACHE }}}
         key: ${{ runner.os }}-${{ hashFiles('Dockerfile') }}
     
-    - name: Load Cache Image
-      if: steps.cache.cache-hit == 'true'
+    - name: Load Cache Image Archive
+      if: steps.cache.outputs.cache-hit == 'true'
       run: docker load -i ${{ env.PATH_CACHE }}}
     
-    - name: Build Image
+    - name: Build Image and Save Image Archive
       if: steps.cache.outputs.cache-hit != 'true'
       run: |
         docker build . -t playwright-requests
