@@ -38,8 +38,8 @@ jobs:
     
     - name: Pull from GitHub Packages
       run: |
-        docker pull ghcr.io/kairi003/utahiro-calender-checker/playwright-requests:latest
-        docker tag ghcr.io/kairi003/utahiro-calender-checker/playwright-requests:latest kairi003/playwright-requests:v1.0
+        docker pull ghcr.io/kairi003/playwright-requests:v1.0
+        docker tag ghcr.io/kairi003/playwright-requests:v1.0 kairi003/playwright-requests:v1.0
 
     - name: Docker Compose run
       run: docker compose up app
