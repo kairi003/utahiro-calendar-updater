@@ -32,22 +32,34 @@ jobs:
       if: github.event_name == 'workflow_dispatch'
       run: echo "LOG_LEVEL=${{ github.event.inputs.logLevel }}" >> .env
     
-    - name: Check Cache Image Archive
-      uses: actions/cache@v3
-      id: cache
+    # - name: Check Cache Image Archive
+    #   uses: actions/cache@v3
+    #   id: cache
+    #   with:
+    #     path: ${{ env.PATH_CACHE }}}
+    #     key: ${{ runner.os }}-${{ hashFiles('Dockerfile') }}
+    
+    # - name: Load Cache Image Archive
+    #   if: steps.cache.outputs.cache-hit == 'true'
+    #   run: docker load -i ${{ env.PATH_CACHE }}}
+    
+    # - name: Build Image and Save Image Archive
+    #   if: steps.cache.outputs.cache-hit != 'true'
+    #   run: |
+    #     docker build . -t playwright-requests
+    #     docker save playwright-requests -o ${{ env.PATH_CACHE }}}
+
+    - name: Login to GitHub Container Registry
+      uses: docker/login-action@v2
       with:
-        path: ${{ env.PATH_CACHE }}}
-        key: ${{ runner.os }}-${{ hashFiles('Dockerfile') }}
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     
-    - name: Load Cache Image Archive
-      if: steps.cache.outputs.cache-hit == 'true'
-      run: docker load -i ${{ env.PATH_CACHE }}}
-    
-    - name: Build Image and Save Image Archive
-      if: steps.cache.outputs.cache-hit != 'true'
+    - name: Docker Pull
       run: |
-        docker build . -t playwright-requests
-        docker save playwright-requests -o ${{ env.PATH_CACHE }}}
+        docker pull ${{ vars.IMAGE_NAME }}
+        docker tag ${{ vars.IMAGE_NAME }} playwright-requests
     
     - name: Docker Compose run
       run: docker compose up app
