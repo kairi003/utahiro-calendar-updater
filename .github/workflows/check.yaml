@@ -28,6 +28,18 @@ jobs:
     - name: Append LOG_LEVEL to .env
       if: github.event_name == 'workflow_dispatch'
       run: echo "LOG_LEVEL=${{ github.event.inputs.logLevel }}" >> .env
+    
+    - name: Login to Docker
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    
+    - name: Pull from GitHub Packages
+      run: |
+        docker pull ghcr.io/kairi003/utahiro-calender-checker/playwright-requests:latest
+        docker tag ghcr.io/kairi003/utahiro-calender-checker/playwright-requests:latest kairi003/playwright-requests:v1.0
 
     - name: Docker Compose run
       run: docker compose up app
