@@ -1,6 +1,7 @@
 services:
   app:
-    image: kairi003/playwright-requests:v1.0
+    build: .
+    image: playwright-requests
     volumes:
       - ./app:/app
     env_file: .env
