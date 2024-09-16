@@ -57,5 +57,4 @@ def register_event(event_date: dt.date) -> Any:
 
 
 if __name__ == "__main__":
-    # get_creds()
-    register_event(dt.date.today())
+    get_creds()
