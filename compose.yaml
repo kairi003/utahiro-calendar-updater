@@ -1,8 +1,24 @@
-services:
+services:  
   app:
     build: .
-    image: playwright-requests
+    image: ${IMAGE_NAME:-utahiro-calendar}
     volumes:
-      - ./app:/app
+      - .:/workdir
     env_file: .env
-    command: python3 /app/main.py
+    command: python3 /workdir/app/main.py
+
+  test:
+    build: .
+    image: ${IMAGE_NAME:-utahiro-calendar}
+    volumes:
+      - .:/workdir
+      - /mnt/wslg:/mnt/wslg
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    environment:
+      - HEADLESS=false
+      - DISPLAY=$DISPLAY
+      - PULSE_SERVER=$PULSE_SERVER
+      - WAYLAND_DISPLAY=$WAYLAND_DISPLAY
+      - XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR
+    env_file: .env
+    command: python3 /workdir/app/main.py

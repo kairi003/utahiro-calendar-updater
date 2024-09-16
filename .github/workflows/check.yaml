@@ -9,61 +9,61 @@ on:
         description: 'Logging Level'
         required: true
         default: 'DEBUG'
+        type: choice
+        options:
+          - DEBUG
+          - INFO
+          - WARNING
 
 env:
-  PATH_CACHE: /tmp/docker-image-arc.tar
-  LOCAL_IMAGE_NAME: playwright-requests
+  REMOTE_IMAGE_NAME: ${{ vars.REMOTE_IMAGE_NAME }}
+  IMAGE_NAME: utahiro-calendar
+  EVENT_LOG: event.log
 
 jobs:
   check-page:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
-    - name: Create env file from secret
+    - name: Define variables
       run: |
-        echo "SECRET_KEY=${{ secrets.SECRET_KEY }}" >> .env
-        echo "PAGE_URL=${{ secrets.PAGE_URL }}" >> .env
-        echo "EVENT_TITLE=${{ vars.EVENT_TITLE }}" >> .env
-        echo "SERVER_URL=${{ vars.SERVER_URL }}" >> .env
-        echo "USER_AGENT=${{ vars.USER_AGENT }}" >> .env
-    
+        echo "USER_AGENT=$USER_AGENT"   >> .env
+        echo "EVENT_TITLE=$EVENT_TITLE" >> .env
+        echo "CALENDAR_ID=$CALENDAR_ID" >> .env
+        echo "PAGE_URL=$PAGE_URL"       >> .env
+        echo "$USER_TOKEN" >> token.json
+      env:
+        USER_AGENT: ${{ vars.USER_AGENT }}
+        EVENT_TITLE: ${{ vars.EVENT_TITLE }}
+        CALENDAR_ID: ${{ vars.CALENDAR_ID }}
+        PAGE_URL: ${{ secrets.PAGE_URL }}
+        USER_TOKEN: ${{ secrets.USER_TOKEN }}
+
     - name: Append LOG_LEVEL to .env
       if: github.event_name == 'workflow_dispatch'
       run: echo "LOG_LEVEL=${{ github.event.inputs.logLevel }}" >> .env
-    
-    # - name: Check Cache Image Archive
-    #   uses: actions/cache@v3
-    #   id: cache
-    #   with:
-    #     path: ${{ env.PATH_CACHE }}}
-    #     key: ${{ runner.os }}-${{ hashFiles('Dockerfile') }}
-    
-    # - name: Load Cache Image Archive
-    #   if: steps.cache.outputs.cache-hit == 'true'
-    #   run: docker load -i ${{ env.PATH_CACHE }}}
-    
-    # - name: Build Image and Save Image Archive
-    #   if: steps.cache.outputs.cache-hit != 'true'
-    #   run: |
-    #     docker build . -t ${{ env.LOCAL_IMAGE_NAME }}
-    #     docker save ${{ env.LOCAL_IMAGE_NAME }} -o ${{ env.PATH_CACHE }}}
 
-    - name: Login to GitHub Container Registry
-      uses: docker/login-action@v2
+    - name: Login to ghrc.io
+      uses: docker/login-action@v3
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: Docker Pull
-      run: |
-        docker pull ${{ vars.REMOTE_IMAGE_NAME }}
-        docker tag ${{ vars.REMOTE_IMAGE_NAME }} ${{ env.LOCAL_IMAGE_NAME }}
-    
-    - name: Docker Compose run
-      run: docker compose up app
 
-    - name: Check Docker Log
-      run: docker compose logs app
+    - name: Pull image
+      run: |
+        docker pull "$REMOTE_IMAGE_NAME"
+        docker tag "$REMOTE_IMAGE_NAME" "$IMAGE_NAME"
+
+    - name: Check event
+      run: docker compose run app
+
+    - name: Commit and push event log
+      run: |
+        git config user.name 'GitHub Actions Bot'
+        git config user.email 'actions@github.com'
+        git add -N "$EVENT_LOG"
+        git diff --cached --exit-code --quiet || git commit -m "Found new event"
+        git push
