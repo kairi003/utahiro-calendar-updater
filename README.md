@@ -1,7 +1,10 @@
 # utahiro-calendar-update
 ウタヒロ室料半額DAYカレンダー 更新スクリプト
 
-- [ウタヒロ室料半額DAYカレンダー][calendar-embed] ([Googleカレンダーに追加][calendar-share])
+[![calendar](https://github.com/user-attachments/assets/613d9069-4309-43bc-8751-e96903acfab9)][calendar-embed]
+
+- [ウタヒロ室料半額DAYカレンダー (埋め込みリンク)][calendar-embed]
+- [Googleカレンダーに追加][calendar-share] すると個人でリマインドや予定追加時通知を行えます
 - [event.log](event.log) に半額DAYの日付が記録されます
 
 
