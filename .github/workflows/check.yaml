@@ -44,12 +44,13 @@ jobs:
 
       - name: Define variables
         run: |
+          mv "$GOOGLE_GHA_CREDS_PATH" credentials.json
           cat << EOF > .env
-          USER_AGENT=$USER_AGENT"
-          EVENT_TITLE=$EVENT_TITLE"
-          CALENDAR_ID=$CALENDAR_ID"
-          PAGE_URL=$PAGE_URL"
-          GOOGLE_GHA_CREDS_PATH=$GOOGLE_GHA_CREDS_PATH"
+          USER_AGENT="$USER_AGENT"
+          EVENT_TITLE="$EVENT_TITLE"
+          CALENDAR_ID="$CALENDAR_ID"
+          PAGE_URL="$PAGE_URL"
+          GOOGLE_GHA_CREDS_PATH=credentials.json
           EOF
         env:
           USER_AGENT: ${{ vars.USER_AGENT }}

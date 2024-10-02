@@ -25,5 +25,23 @@ jobs:
           token_format: "access_token"
           access_token_scopes: "https://www.googleapis.com/auth/calendar"
           create_credentials_file: true
+
+      - name: Define variables
+        run: |
+          mv "$GOOGLE_GHA_CREDS_PATH" credentials.json
+          cat << EOF > .env
+          USER_AGENT="$USER_AGENT"
+          EVENT_TITLE="$EVENT_TITLE"
+          CALENDAR_ID="$CALENDAR_ID"
+          PAGE_URL="$PAGE_URL"
+          GOOGLE_GHA_CREDS_PATH=credentials.json
+          EOF
+        env:
+          USER_AGENT: ${{ vars.USER_AGENT }}
+          EVENT_TITLE: ${{ vars.EVENT_TITLE }}
+          CALENDAR_ID: ${{ vars.CALENDAR_ID }}
+          PAGE_URL: ${{ secrets.PAGE_URL }}
+          GOOGLE_GHA_CREDS_PATH: ${{ steps.auth.outputs.credentials_file_path }}
     
-      - run: pip install -r requirements.txt && pytest -v
+      - run: docker compose build test
+      - run: docker compose run test
