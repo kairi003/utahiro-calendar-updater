@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 import datetime as dt
 import os
 import os.path
@@ -19,7 +22,7 @@ EVENT_TITLE = os.environ["EVENT_TITLE"]
 USER_TOKEN = "token.json"
 CLIENT_SECRET = "credentials.json"
 
-SCOPES = ["https://www.googleapis.com/auth/calendar.events.owned"]
+SCOPES = ["https://www.googleapis.com/auth/calendar"]
 
 
 def get_credentials() -> Credentials:
@@ -58,4 +61,3 @@ def register_event(event_date: dt.date) -> Any:
     }
     event = service.events().insert(calendarId=CALENDAR_ID, body=data).execute()
     return event
-
