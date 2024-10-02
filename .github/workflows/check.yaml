@@ -8,7 +8,7 @@ on:
       logLevel:
         description: 'Logging Level'
         required: true
-        default: 'DEBUG'
+        default: 'INFO'
         type: choice
         options:
           - DEBUG
@@ -26,6 +26,17 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+    
+    - id: auth
+      name: Authenticate with Google Cloud
+      uses: 'google-github-actions/auth@v2'
+      with:
+        project_id: 'utahiro-calendar'
+        service_account: google-calendar-api@utahiro-calendar.iam.gserviceaccount.com
+        workload_identity_provider: 'projects/306157530435/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
+        token_format: 'access_token'
+        access_token_scopes: 'https://www.googleapis.com/auth/calendar'
+        create_credentials_file: true
 
     - name: Define variables
       run: |
@@ -33,13 +44,11 @@ jobs:
         echo "EVENT_TITLE=$EVENT_TITLE" >> .env
         echo "CALENDAR_ID=$CALENDAR_ID" >> .env
         echo "PAGE_URL=$PAGE_URL"       >> .env
-        echo "$USER_TOKEN" >> token.json
       env:
         USER_AGENT: ${{ vars.USER_AGENT }}
         EVENT_TITLE: ${{ vars.EVENT_TITLE }}
         CALENDAR_ID: ${{ vars.CALENDAR_ID }}
         PAGE_URL: ${{ secrets.PAGE_URL }}
-        USER_TOKEN: ${{ secrets.USER_TOKEN }}
 
     - name: Append LOG_LEVEL to .env
       if: github.event_name == 'workflow_dispatch'
