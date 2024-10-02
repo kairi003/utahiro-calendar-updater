@@ -2,13 +2,13 @@ name: Check Page Workflow
 
 on:
   schedule:
-    - cron: '5 */4 * * *'
+    - cron: "5 */4 * * *"
   workflow_dispatch:
     inputs:
       logLevel:
-        description: 'Logging Level'
+        description: "Logging Level"
         required: true
-        default: 'INFO'
+        default: "INFO"
         type: choice
         options:
           - DEBUG
@@ -23,56 +23,60 @@ env:
 jobs:
   check-page:
     runs-on: ubuntu-latest
+    permissions:
+      contents: "read"
+      id-token: "write"
+
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    
-    - id: auth
-      name: Authenticate with Google Cloud
-      uses: 'google-github-actions/auth@v2'
-      with:
-        project_id: 'utahiro-calendar'
-        service_account: google-calendar-api@utahiro-calendar.iam.gserviceaccount.com
-        workload_identity_provider: 'projects/306157530435/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider'
-        token_format: 'access_token'
-        access_token_scopes: 'https://www.googleapis.com/auth/calendar'
-        create_credentials_file: true
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Define variables
-      run: |
-        echo "USER_AGENT=$USER_AGENT"   >> .env
-        echo "EVENT_TITLE=$EVENT_TITLE" >> .env
-        echo "CALENDAR_ID=$CALENDAR_ID" >> .env
-        echo "PAGE_URL=$PAGE_URL"       >> .env
-      env:
-        USER_AGENT: ${{ vars.USER_AGENT }}
-        EVENT_TITLE: ${{ vars.EVENT_TITLE }}
-        CALENDAR_ID: ${{ vars.CALENDAR_ID }}
-        PAGE_URL: ${{ secrets.PAGE_URL }}
+      - id: auth
+        name: Authenticate with Google Cloud
+        uses: "google-github-actions/auth@v2"
+        with:
+          project_id: "utahiro-calendar"
+          service_account: google-calendar-api@utahiro-calendar.iam.gserviceaccount.com
+          workload_identity_provider: "projects/306157530435/locations/global/workloadIdentityPools/github-actions-pool/providers/github-actions-provider"
+          token_format: "access_token"
+          access_token_scopes: "https://www.googleapis.com/auth/calendar"
+          create_credentials_file: true
 
-    - name: Append LOG_LEVEL to .env
-      if: github.event_name == 'workflow_dispatch'
-      run: echo "LOG_LEVEL=${{ github.event.inputs.logLevel }}" >> .env
+      - name: Define variables
+        run: |
+          echo "USER_AGENT=$USER_AGENT"   >> .env
+          echo "EVENT_TITLE=$EVENT_TITLE" >> .env
+          echo "CALENDAR_ID=$CALENDAR_ID" >> .env
+          echo "PAGE_URL=$PAGE_URL"       >> .env
+        env:
+          USER_AGENT: ${{ vars.USER_AGENT }}
+          EVENT_TITLE: ${{ vars.EVENT_TITLE }}
+          CALENDAR_ID: ${{ vars.CALENDAR_ID }}
+          PAGE_URL: ${{ secrets.PAGE_URL }}
 
-    - name: Login to ghrc.io
-      uses: docker/login-action@v3
-      with:
-        registry: ghcr.io
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Append LOG_LEVEL to .env
+        if: github.event_name == 'workflow_dispatch'
+        run: echo "LOG_LEVEL=${{ github.event.inputs.logLevel }}" >> .env
 
-    - name: Pull image
-      run: |
-        docker pull "$REMOTE_IMAGE_NAME"
-        docker tag "$REMOTE_IMAGE_NAME" "$IMAGE_NAME"
+      - name: Login to ghrc.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Check event
-      run: docker compose run app
+      - name: Pull image
+        run: |
+          docker pull "$REMOTE_IMAGE_NAME"
+          docker tag "$REMOTE_IMAGE_NAME" "$IMAGE_NAME"
 
-    - name: Commit and push event log
-      run: |
-        git config user.name 'GitHub Actions Bot'
-        git config user.email 'actions@github.com'
-        git add "$EVENT_LOG"
-        git diff --cached --exit-code --quiet || git commit -m "Found new event"
-        git push
+      - name: Check event
+        run: docker compose run app
+
+      - name: Commit and push event log
+        run: |
+          git config user.name 'GitHub Actions Bot'
+          git config user.email 'actions@github.com'
+          git add "$EVENT_LOG"
+          git diff --cached --exit-code --quiet || git commit -m "Found new event"
+          git push
