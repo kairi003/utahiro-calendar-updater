@@ -25,6 +25,7 @@ logger = getLogger(__name__)
 
 HEADLESS = bool(strtobool(os.getenv("HEADLESS", "true")))
 
+DATE_SP = '\U000f078b\U000f1677'
 
 def close_dialog(page: Page):
     page.evaluate('''() => {
@@ -91,7 +92,7 @@ def main():
 
             # post date element
             m: re.Match
-            if m := re.match(r'^(?P<num>\d+)(?P<unit>秒|分|時間|日)前..$', text):
+            if m := re.match(rf'(?P<num>\d+)(?P<unit>秒|分|時間|日)前{DATE_SP}', text):
                 post_dt = dt.datetime.now(JST)
                 num = int(m['num'])
                 match m['unit']:
@@ -105,7 +106,7 @@ def main():
                         post_dt -= dt.timedelta(days=num)
                 continue
 
-            elif m := re.match(r'^(?P<year>\d+)/(?P<month>\d+)/(?P<date>\d+)..$', text):
+            elif m := re.match(rf'(?P<year>\d+)/(?P<month>\d+)/(?P<date>\d+){DATE_SP}', text):
                 date_ = map(int, m.group('year', 'month', 'date'))
                 post_dt = dt.datetime(*date_, tzinfo=JST)
                 continue
@@ -123,8 +124,6 @@ def main():
                     logger.info(event_date)
                     update_event_log(event_date)
                     break
-        else:
-            raise Exception('event not found')
 
         browser.close()
 
