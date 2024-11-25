@@ -164,3 +164,4 @@ cython_debug/
 # GCP Credentials
 credentials.json
 token.json
+*.env
