@@ -20,7 +20,6 @@ services:
       - PULSE_SERVER=$PULSE_SERVER
       - WAYLAND_DISPLAY=$WAYLAND_DISPLAY
       - XDG_RUNTIME_DIR=$XDG_RUNTIME_DIR
-      - LOG_LEVEL=DEBUG
     env_file: .env
     command: python3 /workdir/app/main.py
   
