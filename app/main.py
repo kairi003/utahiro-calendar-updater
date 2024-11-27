@@ -25,7 +25,7 @@ logger = getLogger(__name__)
 
 HEADLESS = bool(strtobool(os.getenv("HEADLESS", "true")))
 
-DATE_SP = '\U000f078b\U000f1677|\U000f078b\U000f17e0'
+DATE_SP = '\U000f078b(\U000f1677|\U000f17e0)'
 
 def close_dialog(page: Page):
     page.evaluate('''() => {
