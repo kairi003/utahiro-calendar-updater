@@ -25,7 +25,7 @@ logger = getLogger(__name__)
 
 HEADLESS = bool(strtobool(os.getenv("HEADLESS", "true")))
 
-DATE_SP = '\U000f078b\U000f1677'
+DATE_SP = '\U000f078b\U000f1677|\U000f078b\U000f17e0'
 
 def close_dialog(page: Page):
     page.evaluate('''() => {
@@ -88,7 +88,8 @@ def main():
         post_dt = None
         for element in get_navite_text_elements(page):
             text = element.text_content()
-            logger.debug([text])
+            logger.debug(f'{post_dt=}')
+            logger.debug(f'{text=}')
 
             # post date element
             m: re.Match
