@@ -1,4 +1,9 @@
 # utahiro-calendar-update
+
+> [!CAUTION]
+> 動作が不安定であるため、カレンダーの更新方法を別のスクリプトに変更しました。
+> このリポジトリは既に利用されないためアーカイブしますが、 [ウタヒロ室料半額DAYカレンダー (埋め込みリンク)][calendar-embed] は今後も引き続き更新されます。
+
 ウタヒロ室料半額DAYカレンダー 更新スクリプト
 
 [![calendar](https://github.com/user-attachments/assets/613d9069-4309-43bc-8751-e96903acfab9)][calendar-embed]
